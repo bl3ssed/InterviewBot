@@ -15,12 +15,13 @@ public class QuestionService {
 
     @Autowired
     private QuestionRepository questionRepository;
+    private TestService testService;
 
     // Создание нового вопроса
     public Question createQuestion(Integer testId, String questionText) {
         Question question = new Question();
-        Test test = TestService.(testId);
-        question.setTest(test);
+        Optional<Test> test = testService.getTestById(testId);
+        question.setTest(test.orElse(null));
         question.setQuestionText(questionText);
         question.setCreatedAt(java.time.LocalDateTime.now().toString());
         question.setUpdatedAt(java.time.LocalDateTime.now().toString());
@@ -46,7 +47,7 @@ public class QuestionService {
         return questionRepository.findByTestId(testId);
     }
 
-    public Optional<Question> getUserById(Integer questionId) {
+    public Optional<Question> getByQuestionId(Integer questionId) {
         return questionRepository.findById(questionId);
     }
 

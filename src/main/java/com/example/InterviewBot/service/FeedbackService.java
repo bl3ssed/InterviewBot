@@ -13,11 +13,12 @@ public class FeedbackService {
 
     @Autowired
     private FeedbackRepository feedbackRepository;
+    private UserService userService;
 
     // Создание нового отзыва
     public Feedback createFeedback(Long userId, String feedbackText, Integer rate) {
         Feedback feedback = new Feedback();
-        feedback.setUser(new User(userId));
+        feedback.setUser(userService.getUserById(userId).orElse(null));
         feedback.setFeedbackText(feedbackText);
         feedback.setRate(rate);
         feedback.setSubmittedAt(java.time.LocalDateTime.now().toString());

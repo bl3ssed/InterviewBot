@@ -41,7 +41,7 @@ public class TestService {
     }
 
     // Получение теста по названию
-    public Test getTestByTitle(String title) {
+    public Optional<Test> getTestByTitle(String title) {
         return testRepository.findByTitle(title);
     }
 
@@ -55,6 +55,6 @@ public class TestService {
         return testRepository.findAllByOrderByCreatedAtDesc();
     }
     public Optional<Test> getTestById(Integer testId) {
-        return TestRepository.findByTestId(testId);
+        return testRepository.findByTestId(testId);
     }
 }
