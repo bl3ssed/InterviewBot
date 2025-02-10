@@ -22,6 +22,6 @@ public class Feedback {
     private Integer rate; // Оценка отзыва
 
     @Column(nullable = false)
-    private String SubmittedAt;
+    private String submittedAt;
 
 }

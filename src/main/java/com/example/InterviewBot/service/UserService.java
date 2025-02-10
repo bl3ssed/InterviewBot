@@ -5,6 +5,8 @@ import com.example.InterviewBot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,11 +19,13 @@ public class UserService {
     private UserRepository userRepository;
 
     // Регистрация нового пользователя
-    public User registerUser(String username, String firstName, String role) {
+    public User registerUser(String username, String firstName, String role, Long tgId) {
         User user = new User();
         user.setUsername(username);
         user.setFirstName(firstName);
         user.setRole(role);
+        user.setCreatedAt(Date.from(Instant.now()).toString());
+        user.setTgId(tgId);
         return userRepository.save(user);
     }
 

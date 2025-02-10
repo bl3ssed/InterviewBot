@@ -44,7 +44,7 @@ public class QuestionService {
 
     // Получение всех вопросов для теста
     public List<Question> getQuestionsByTest(Integer testId) {
-        return questionRepository.findByTestId(testId);
+        return questionRepository.findByTest_TestId(testId);
     }
 
     public Optional<Question> getByQuestionId(Integer questionId) {

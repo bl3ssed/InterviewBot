@@ -19,4 +19,10 @@ public class User {
 
     @Column(nullable = false)
     private String role; // Например, "user", "admin"
+
+    @Column(name="created_at",nullable = false)
+    private String createdAt;
+
+    @Column(name = "tg_id",nullable = false,unique = true)
+    private Long tgId;
 }

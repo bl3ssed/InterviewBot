@@ -44,27 +44,41 @@ public class TelegramBotController extends TelegramLongPollingBot {
             long chatId = update.getMessage().getChatId();
             String username = update.getMessage().getFrom().getUserName();
             String firstName = update.getMessage().getFrom().getFirstName();
+            Long tgID = update.getMessage().getFrom().getId();
 
             // Обработка команды /start
             if (messageText.equals("/start")) {
                 try {
-                    User user = userService.registerUser(username, firstName, "user");
+                    User user = userService.registerUser(username, firstName, "user",tgID);
                     botUtils.sendMessage(chatId, "Вы успешно зарегистрированы! Добро пожаловать, " + firstName + ".",this);
                 }catch (TelegramApiException ex) {
+                    ex.printStackTrace();
                     throw new RuntimeException(ex);
                 }
                 catch (Exception e) {
                     try {
                         botUtils.sendMessage(chatId, "Вы уже зарегистрированы.",this);
                     } catch (TelegramApiException ex) {
+                        ex.printStackTrace();
                         throw new RuntimeException(ex);
                     }
                 }
-            } else {
+            }
+            //Убрать нахуй
+            else if (messageText.contains("52")) {
+                try {
+                    botUtils.sendMessage(chatId,messageText+" "+firstName + " " + "52 on the line!",this);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e);
+                }
+            }
+            else {
                 // Обработка других команд и сообщений
                 try {
                     botUtils.sendMessage(chatId, "Команда не распознана. Пожалуйста, используйте /start для начала.",this);
                 } catch (TelegramApiException e) {
+                    e.printStackTrace();
                     throw new RuntimeException(e);
                 }
             }

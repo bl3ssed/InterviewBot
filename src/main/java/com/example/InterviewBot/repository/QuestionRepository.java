@@ -10,10 +10,9 @@ import java.util.Optional;
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Integer> {
 
-    Optional<Question> findById(int id);
+    Optional<Question> findByQuestionId(Integer questionId);
 
-    // Получение всех вопросов для конкретного теста
-    List<Question> findByTestId(Integer testId);
+    List<Question> findByTest_TestId(Integer testTestId);
 
     // Поиск вопросов, содержащих определенное слово в тексте
     List<Question> findByQuestionTextContainingIgnoreCase(String keyword);

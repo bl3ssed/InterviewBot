@@ -47,7 +47,7 @@ public class AnswerService {
 
     // Получение всех ответов для вопроса
     public List<Answer> getAnswersByQuestion(Integer questionId) {
-        return answerRepository.findByQuestionId(questionId);
+        return answerRepository.findByQuestion_QuestionId(questionId);
     }
 
     // Другие методы, если необходимо

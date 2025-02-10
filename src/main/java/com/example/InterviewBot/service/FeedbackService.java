@@ -27,7 +27,7 @@ public class FeedbackService {
 
     // Получение всех отзывов от пользователя
     public List<Feedback> getFeedbackByUser(Long userId) {
-        return feedbackRepository.findByUserId(userId);
+        return feedbackRepository.findByUser_UserId(userId);
     }
 
     // Другие методы, если необходимо

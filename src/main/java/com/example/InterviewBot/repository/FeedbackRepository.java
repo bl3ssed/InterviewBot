@@ -10,10 +10,10 @@ import java.util.List;
 public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
 
     // Получение отзыва по ID
-    Optional<Feedback> findById(Long feedbackId);
+    Optional<Feedback> findByFeedbackId(Long feedbackId);
 
     // Получение всех отзывов от пользователя
-    List<Feedback> findByUserId(Long userId);
+    List<Feedback> findByUser_UserId(Long userId);
 
     // Получение всех отзывов с определенной оценкой
     List<Feedback> findByRate(Integer rate);
