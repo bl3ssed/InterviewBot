@@ -6,6 +6,8 @@ import com.example.InterviewBot.repository.FeedbackRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -21,7 +23,7 @@ public class FeedbackService {
         feedback.setUser(userService.getUserById(userId).orElse(null));
         feedback.setFeedbackText(feedbackText);
         feedback.setRate(rate);
-        feedback.setSubmittedAt(java.time.LocalDateTime.now().toString());
+        feedback.setSubmittedAt(Timestamp.from(Instant.from(Instant.now())));
         return feedbackRepository.save(feedback);
     }
 

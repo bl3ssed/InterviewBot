@@ -6,6 +6,8 @@ import com.example.InterviewBot.repository.TestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,8 +22,8 @@ public class TestService {
         Test test = new Test();
         test.setTitle(title);
         test.setDescription(description);
-        test.setCreatedAt(java.time.LocalDateTime.now().toString());
-        test.setUpdatedAt(java.time.LocalDateTime.now().toString());
+        test.setCreatedAt(Timestamp.from(Instant.from(Instant.now())));
+        test.setUpdatedAt(Timestamp.from(Instant.from(Instant.now())));
         return testRepository.save(test);
     }
 
@@ -31,7 +33,7 @@ public class TestService {
                 .orElseThrow(() -> new RuntimeException("Test not found"));
         test.setTitle(title);
         test.setDescription(description);
-        test.setUpdatedAt(java.time.LocalDateTime.now().toString());
+        test.setUpdatedAt(Timestamp.from(Instant.from(Instant.now())));;
         return testRepository.save(test);
     }
 

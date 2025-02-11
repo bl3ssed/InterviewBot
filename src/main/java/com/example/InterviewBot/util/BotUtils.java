@@ -14,7 +14,7 @@ public class BotUtils {
     public BotUtils() {
     }
 
-    public void sendMessage(long chatId, String text,AbsSender sender) throws TelegramApiException {
+    public void sendMessage(long chatId, String text,AbsSender sender) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chatId));
         sendMessage.setText(text);

@@ -7,6 +7,8 @@ import com.example.InterviewBot.repository.StatisticsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -22,7 +24,7 @@ public class StatisticsService {
         statistics.setTest(test);
         statistics.setScore(score);
         statistics.setTotalQuestions(totalQuestions);
-        statistics.setCompletedAt(java.time.LocalDateTime.now().toString());
+        statistics.setCompletedAt(Timestamp.from(Instant.from(Instant.now())));
         return statisticsRepository.save(statistics);
     }
 
