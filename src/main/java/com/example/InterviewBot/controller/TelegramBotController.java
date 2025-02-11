@@ -74,28 +74,41 @@ public class TelegramBotController extends TelegramLongPollingBot {
             String username = update.getMessage().getFrom().getUserName();
             String firstName = update.getMessage().getFrom().getFirstName();
             Long tgID = update.getMessage().getFrom().getId();
-
-            // Обработка команды /start
-            if (messageText.equals("/start")) {
-                start(username, firstName, tgID, chatId);
+            String currentState = userStateManager.getUserStates().getOrDefault(chatId,null);
+            if (currentState == null) {
+                // Обработка команды /start
+                if (messageText.equals("/start")) {
+                    start(username, firstName, tgID, chatId);
+                }
+                // Обработка команды /tests
+                else if (messageText.equals("/tests")) {
+                    showTests(chatId);
+                }
+                else if (messageText.equals("/get_admin")) {
+                    getAdminRequest(tgID, chatId);
+                }
+                else {
+                    // Обработка других команд и сообщений
+                    botUtils.sendMessage(chatId, "Команда не распознана. Пожалуйста, используйте /start для начала.",this);
+                }
             }
-            // Обработка команды /tests
-            else if (messageText.equals("/tests")) {
-                showTests(chatId);
-            }
-            // Обработка выбора теста
-            else if (userStateManager.getUserStates().getOrDefault(chatId, "").equals("SELECTING_TEST")) {
-                startTest(messageText, chatId);
-            }else if (userStateManager.getUserStates().getOrDefault(chatId, "").equals("TEST_IN_PROGRESS")) {
-                processAnswer(messageText, chatId);
-            }
-            else if (messageText.equals("/get_admin")) {
-                getAdminRequest(tgID, chatId);
-            } else if (userStateManager.getUserStates().getOrDefault(chatId, "").equals("WAITING_FOR_PASSWORD")) {
-                setAdmin(messageText, tgID, username, firstName, chatId);
-            }else {
-                // Обработка других команд и сообщений
-                botUtils.sendMessage(chatId, "Команда не распознана. Пожалуйста, используйте /start для начала.",this);
+            else {
+                switch (currentState) {
+                    case "SELECTING_TEST":
+                        // Обработка выбора теста
+                        startTest(messageText, chatId);
+                        break;
+                    case "TEST_IN_PROGRESS":
+                        processAnswer(messageText, chatId);
+                        break;
+                    case "WAITING_FOR_PASSWORD":
+                        setAdmin(messageText, tgID, username, firstName, chatId);
+                        break;
+                    default:
+                        userStateManager.getUserStates().remove(chatId);
+                        botUtils.sendMessage(chatId, "Неизвестное состояние. Пожалуйста, начните с команды /start.", this);
+                        break;
+                }
             }
         }
     }
@@ -159,6 +172,11 @@ public class TelegramBotController extends TelegramLongPollingBot {
 
     private void sendQuestion(long chatId, Question question) {
         StringBuilder message = new StringBuilder("Вопрос:\n").append(question.getQuestionText()).append("\n");
+        List<Answer> currentAnswers = answerRepository.findByQuestion_QuestionId(question.getQuestionId());
+        currentAnswers.sort(Comparator.comparing(Answer::getNumber));
+        for (Answer ans : currentAnswers) {
+            message.append(ans.getNumber().toString()).append(") ").append(ans.getAnswerText()).append("\n");
+        }
         // Здесь можно добавить варианты ответов, если они есть
         botUtils.sendMessage(chatId, message.toString(), this);
     }
@@ -187,9 +205,24 @@ public class TelegramBotController extends TelegramLongPollingBot {
                 endTest(chatId, testId);
                 return;
             }
-
+            Integer number = Integer.parseInt(messageText);
+            List<Answer> currentAnswers = answerRepository.findByQuestion_QuestionId(questions.get(currentIndex).getQuestionId());
+            currentAnswers.sort(Comparator.comparing(Answer::getNumber));
+            Answer userAnswer = currentAnswers.get(number-1);
             Question currentQuestion = questions.get(currentIndex);
+            String rightAnswer = "";
 
+            if (userAnswer.getIsCorrect()) {
+                botUtils.sendMessageWithKeyboardTest(chatId, "Ответ верный. Переходим к следующему вопросу.", this,4);
+            }else {
+                for (Answer answer : currentAnswers) {
+                    if (answer.getIsCorrect()) {
+                        rightAnswer += answer.getAnswerText() + " ";
+                    }
+                }
+                String msg ="Ответ не верный.\n"+"Правильный ответ: "+rightAnswer+"\n"+" Переходим к следующему вопросу." ;
+                botUtils.sendMessageWithKeyboardTest(chatId, msg , this,4);
+            }
             // Здесь можно добавить логику для проверки ответа
             // Например, сравнить ответ пользователя с правильным ответом
             // Предположим, что ответы хранятся в отдельной таблице answers
@@ -201,7 +234,6 @@ public class TelegramBotController extends TelegramLongPollingBot {
             // }
 
             // Для простоты, предположим, что любой ответ считается правильным
-            botUtils.sendMessage(chatId, "Ответ принят. Переходим к следующему вопросу.", this);
 
             // Переходим к следующему вопросу
             currentTestManager.setCurrentQuestionIndex(chatId, currentIndex + 1);
@@ -237,10 +269,10 @@ public class TelegramBotController extends TelegramLongPollingBot {
     private void start(String username, String firstName, Long tgID, long chatId) {
         try {
             User user = userService.registerUser(username, firstName, "user", tgID);
-            botUtils.sendMessage(chatId, "Вы успешно зарегистрированы! Добро пожаловать, " + firstName + ".",this);
+            botUtils.sendMessageWithKeyboard(chatId, "Вы успешно зарегистрированы! Добро пожаловать, " + firstName + ".",this);
         }
         catch (Exception e) {
-            botUtils.sendMessage(chatId, "Вы уже зарегистрированы.",this);
+            botUtils.sendMessageWithKeyboard(chatId, "Вы уже зарегистрированы.",this);
         }
     }
 
