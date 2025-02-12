@@ -12,6 +12,7 @@ public class CurrentTestManager {
     private Map<Long, Long> currentTests = new HashMap<>();
     private Map<Long, Integer> currentQuestionIndices = new HashMap<>();
     private Map<Long, List<Question>> questions = new HashMap<>();
+    private Map<Long, Integer> score = new HashMap<>();
 
     public void setCurrentTest(long chatId, long testId) {
         currentTests.put(chatId, testId);
@@ -37,9 +38,22 @@ public class CurrentTestManager {
         return questions.get(chatId);
     }
 
+    public void incrementScore(long chatId) {
+        score.put(chatId, score.getOrDefault(chatId, 0) + 1);
+    }
+
+    public int getScore(long chatId) {
+        return score.getOrDefault(chatId, 0);
+    }
+
+    public int getTotalQuestions(long chatId) {
+        return questions.get(chatId).size();
+    }
+
     public void removeCurrentTest(long chatId) {
         currentTests.remove(chatId);
         currentQuestionIndices.remove(chatId);
         questions.remove(chatId);
+        score.remove(chatId);
     }
 }
