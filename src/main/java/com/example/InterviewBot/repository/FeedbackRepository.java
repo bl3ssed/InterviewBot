@@ -15,6 +15,8 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
     // Получение всех отзывов от пользователя
     List<Feedback> findByUser_UserId(Long userId);
 
+    Optional<Feedback> findByUser_tgId(Long userId);
+
     // Получение всех отзывов с определенной оценкой
     List<Feedback> findByRate(Integer rate);
 

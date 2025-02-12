@@ -2,13 +2,9 @@ package com.example.InterviewBot.controller;
 
 
 import com.example.InterviewBot.config.BotConfig;
-import com.example.InterviewBot.model.Answer;
-import com.example.InterviewBot.model.Question;
-import com.example.InterviewBot.model.Test;
-import com.example.InterviewBot.model.User;
-import com.example.InterviewBot.repository.AnswerRepository;
-import com.example.InterviewBot.repository.QuestionRepository;
-import com.example.InterviewBot.repository.TestRepository;
+import com.example.InterviewBot.model.*;
+import com.example.InterviewBot.repository.*;
+import com.example.InterviewBot.service.FeedbackService;
 import com.example.InterviewBot.service.UserService;
 import com.example.InterviewBot.util.BotUtils;
 import com.example.InterviewBot.util.CurrentTestManager;
@@ -44,6 +40,9 @@ public class TelegramBotController extends TelegramLongPollingBot {
     private UserService userService = new UserService();
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private TestRepository testRepository;
 
     @Autowired
@@ -51,6 +50,12 @@ public class TelegramBotController extends TelegramLongPollingBot {
 
     @Autowired
     private QuestionRepository questionRepository ;
+
+    @Autowired
+    private FeedbackService feedbackService;
+
+    @Autowired
+    private FeedbackRepository feedbackRepository;
 
     @Autowired
     private BotUtils botUtils;
@@ -83,6 +88,9 @@ public class TelegramBotController extends TelegramLongPollingBot {
                 // Обработка команды /tests
                 else if (messageText.equals("/tests")) {
                     showTests(chatId);
+                }// Обработка фидбека
+                else if (messageText.equals("/feedback")) {
+                    getFeedback(chatId,tgID);
                 }
                 else if (messageText.equals("/get_admin")) {
                     getAdminRequest(tgID, chatId);
@@ -104,6 +112,14 @@ public class TelegramBotController extends TelegramLongPollingBot {
                     case "WAITING_FOR_PASSWORD":
                         setAdmin(messageText, tgID, username, firstName, chatId);
                         break;
+                    case "WAITING_FOR_FEEDBACK_TEXT":
+                        // Обработка выбора теста
+                        getFeedbackText(messageText, chatId,tgID);
+                        break;
+                    case "WAITING_FOR_FEEDBACK_RATE":
+                        // Обработка выбора теста
+                        getFeedbackRate(messageText, chatId,tgID);
+                        break;
                     default:
                         userStateManager.getUserStates().remove(chatId);
                         botUtils.sendMessage(chatId, "Неизвестное состояние. Пожалуйста, начните с команды /start.", this);
@@ -111,6 +127,37 @@ public class TelegramBotController extends TelegramLongPollingBot {
                 }
             }
         }
+    }
+
+    private void getFeedbackRate(String messageText, long chatId, Long tgID) {
+        Integer rate = Integer.parseInt(messageText);
+        System.out.println("msg text = "+messageText);
+        System.out.println("rate text = "+rate.toString());
+        feedbackService.setFeedbackRate(tgID,rate);
+
+        userStateManager.getUserStates().remove(chatId);
+        String msg = "Спасибо за ваш отзыв!\n";
+        botUtils.sendMessage(chatId, msg, this);
+    }
+
+    private void getFeedbackText(String messageText, long chatId,long tgID) {
+        // get text feedback...
+        if (feedbackRepository.findByUser_tgId(tgID).isEmpty()) {
+            feedbackService.createFeedback(tgID,messageText,0);
+        }
+        else {
+            feedbackService.updateFeedback(Objects.requireNonNull(userRepository.findByTgId(tgID).orElse(null)),messageText,0);
+        }
+        userStateManager.getUserStates().remove(chatId);
+        userStateManager.getUserStates().put(tgID, "WAITING_FOR_FEEDBACK_RATE");
+        String msg = "Введите вашу оценку 1-10:\n";
+        botUtils.sendMessage(chatId, msg, this);
+    }
+
+    private void getFeedback(long chatId,Long tgID) {
+        userStateManager.getUserStates().put(tgID, "WAITING_FOR_FEEDBACK_TEXT");
+        String msg = "Напишите отзыв о работе бота:\n";
+        botUtils.sendMessage(chatId, msg, this);
     }
 
     private void showTests(long chatId) {
@@ -162,7 +209,7 @@ public class TelegramBotController extends TelegramLongPollingBot {
             currentTestManager.setQuestions(chatId, selectedQuestions);
 
             // Отправляем первый вопрос
-            sendQuestion(chatId, selectedQuestions.get(0));
+            sendQuestion(chatId, selectedQuestions.getFirst());
         } catch (NumberFormatException e) {
             botUtils.sendMessage(chatId, "Пожалуйста, введите корректный ID теста.", this);
         } catch (RuntimeException e) {
@@ -213,6 +260,7 @@ public class TelegramBotController extends TelegramLongPollingBot {
             String rightAnswer = "";
 
             if (userAnswer.getIsCorrect()) {
+                /* TODO исправить count, вводить неявно. */
                 botUtils.sendMessageWithKeyboardTest(chatId, "Ответ верный. Переходим к следующему вопросу.", this,4);
             }else {
                 for (Answer answer : currentAnswers) {
@@ -221,6 +269,7 @@ public class TelegramBotController extends TelegramLongPollingBot {
                     }
                 }
                 String msg ="Ответ не верный.\n"+"Правильный ответ: "+rightAnswer+"\n"+" Переходим к следующему вопросу." ;
+                /* TODO исправить count, вводить неявно. */
                 botUtils.sendMessageWithKeyboardTest(chatId, msg , this,4);
             }
             // Здесь можно добавить логику для проверки ответа

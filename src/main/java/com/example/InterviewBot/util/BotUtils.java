@@ -36,7 +36,7 @@ public class BotUtils {
         row.add("/start");
         row.add("/help");
         row.add("/tests");
-        row.add("/get_admin");
+        row.add("/feedback");
         keyboardMarkup.setKeyboard(java.util.Collections.singletonList(row));
         keyboardMarkup.setResizeKeyboard(true);
         sendMessage.setReplyMarkup(keyboardMarkup);
