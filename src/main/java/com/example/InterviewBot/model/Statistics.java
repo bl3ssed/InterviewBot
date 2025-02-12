@@ -3,6 +3,8 @@ package com.example.InterviewBot.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.sql.Timestamp;
+
 @Entity
 @Table(name = "statistics")
 @Data
@@ -27,5 +29,5 @@ public class Statistics {
     private Integer totalQuestions;
 
     @Column(nullable = false)
-    private String completedAt;
+    private Timestamp completedAt;
 }

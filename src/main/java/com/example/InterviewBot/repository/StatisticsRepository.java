@@ -18,7 +18,7 @@ public interface StatisticsRepository extends JpaRepository<Statistics, Long> {
     List<Statistics> findByTest(Test test);
 
     // Поиск статистики по пользователю и тесту
-    List<Statistics> findByUserAndTest(User user, Test test);
+    Statistics findByUserAndTest(User user, Test test);
 
     // Получение всех статистик, отсортированных по дате завершения
     List<Statistics> findAllByOrderByCompletedAtDesc();

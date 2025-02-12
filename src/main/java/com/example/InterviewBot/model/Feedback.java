@@ -2,6 +2,8 @@ package com.example.InterviewBot.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.sql.Timestamp;
+
 @Entity
 @Table(name = "feedback")
 @Data
@@ -22,6 +24,6 @@ public class Feedback {
     private Integer rate; // Оценка отзыва
 
     @Column(nullable = false)
-    private String SubmittedAt;
+    private Timestamp submittedAt;
 
 }

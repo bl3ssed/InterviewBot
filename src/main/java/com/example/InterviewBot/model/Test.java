@@ -2,6 +2,8 @@ package com.example.InterviewBot.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.sql.Timestamp;
+
 @Entity
 @Table(name = "tests")
 @Data
@@ -11,15 +13,15 @@ public class Test {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer testId;
 
-    @Column(nullable = false)
+    @Column(nullable = false,name = "title")
     private String title;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT",name = "description")
     private String description;
 
-    @Column(nullable = false)
-    private String createdAt;
+    @Column(nullable = false,name = "created_at")
+    private Timestamp createdAt;
 
-    @Column(nullable = false)
-    private String updatedAt;
+    @Column(nullable = false,name = "updated_at")
+    private Timestamp updatedAt;
 }

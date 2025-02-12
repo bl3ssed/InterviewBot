@@ -2,6 +2,7 @@ package com.example.InterviewBot.service;
 
 import com.example.InterviewBot.model.Answer;
 import com.example.InterviewBot.model.Question;
+import com.example.InterviewBot.model.Test;
 import com.example.InterviewBot.repository.AnswerRepository;
 import com.example.InterviewBot.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +17,13 @@ public class AnswerService {
     @Autowired
     private AnswerRepository answerRepository;
     @Autowired
-    private QuestionRepository questionRepository;
+    private QuestionService questionService;
 
     // Создание нового ответа
     public Answer createAnswer(Integer questionId, String answerText, Integer number, Boolean isCorrect) {
         Answer answer = new Answer();
-        Optional<Question> question = QuestionService.getByUserId(questionId);
-        answer.setQuestion();
+        Optional<Question> question = questionService.getByQuestionId(questionId);
+        answer.setQuestion(question.orElse(null));
         answer.setAnswerText(answerText);
         answer.setNumber(number);
         answer.setIsCorrect(isCorrect);
@@ -46,7 +47,7 @@ public class AnswerService {
 
     // Получение всех ответов для вопроса
     public List<Answer> getAnswersByQuestion(Integer questionId) {
-        return answerRepository.findByQuestionId(questionId);
+        return answerRepository.findByQuestion_QuestionId(questionId);
     }
 
     // Другие методы, если необходимо
