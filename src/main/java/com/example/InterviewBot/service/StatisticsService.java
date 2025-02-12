@@ -28,6 +28,14 @@ public class StatisticsService {
         return statisticsRepository.save(statistics);
     }
 
+    public Statistics updateStatistics(User user, Test test, int score, int totalQuestions) {
+        Statistics statistics = statisticsRepository.findByUserAndTest(user,test);
+        statistics.setScore(score);
+        statistics.setTotalQuestions(totalQuestions);
+        statistics.setCompletedAt(Timestamp.from(Instant.from(Instant.now())));
+        return statisticsRepository.save(statistics);
+    }
+
     // Получение статистики по пользователю
     public List<Statistics> getStatisticsByUser(User user) {
         return statisticsRepository.findByUser(user);
@@ -39,7 +47,7 @@ public class StatisticsService {
     }
 
     // Получение статистики по пользователю и тесту
-    public List<Statistics> getStatisticsByUserAndTest(User user, Test test) {
+    public Statistics getStatisticsByUserAndTest(User user, Test test) {
         return statisticsRepository.findByUserAndTest(user, test);
     }
 
