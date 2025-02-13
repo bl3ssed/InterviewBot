@@ -15,14 +15,16 @@ public class QuestionService {
 
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
     private TestService testService;
 
     // Создание нового вопроса
-    public Question createQuestion(Integer testId, String questionText) {
+    public Question createQuestion(Integer testId, String questionText,String detailedText){
         Question question = new Question();
         Optional<Test> test = testService.getTestById(testId);
         question.setTest(test.orElse(null));
         question.setQuestionText(questionText);
+        question.setDetailed(detailedText);
         question.setCreatedAt(java.time.LocalDateTime.now().toString());
         question.setUpdatedAt(java.time.LocalDateTime.now().toString());
         return questionRepository.save(question);

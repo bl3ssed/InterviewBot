@@ -1,0 +1,405 @@
+{
+  "testName": "Операции с переменными",
+  "questions": [
+    {
+      "text": "Что произойдет, если объявить переменную типа int и присвоить ей значение, превышающее диапазон int?",
+      "detailedText": "Если присвоить переменной int значение, выходящее за диапазон (-2^31 до 2^31-1), компилятор выдаст ошибку.",
+      "answers": [
+        {"text": "Число сохранится, но с обрезкой разрядов", "correct": false, "order": 1},
+        {"text": "Программа завершится с исключением", "correct": false, "order": 2},
+        {"text": "Компилятор выдаст ошибку", "correct": true, "order": 3},
+        {"text": "Значение автоматически преобразуется в long", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какие операции можно выполнять над переменными типа boolean в Java?",
+      "detailedText": "В Java boolean участвует только в логических операциях, арифметические недопустимы.",
+      "answers": [
+        {"text": "Арифметические операции: +, -, *", "correct": false, "order": 1},
+        {"text": "Логические операции: &&, ||, !", "correct": true, "order": 2},
+        {"text": "Операции сдвига: >>, <<", "correct": false, "order": 3},
+        {"text": "Все вышеперечисленные", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какой результат выполнения операции 5 / 2 в Java?",
+      "detailedText": "Целочисленное деление между int отбрасывает дробную часть.",
+      "answers": [
+        {"text": "3", "correct": false, "order": 1},
+        {"text": "2", "correct": true, "order": 2},
+        {"text": "2.5", "correct": false, "order": 3},
+        {"text": "Ошибка компиляции", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Что произойдет при выражении int x = 10; x += 2.5;?",
+      "detailedText": "int нельзя складывать с double без явного приведения.",
+      "answers": [
+        {"text": "x станет 12.5", "correct": false, "order": 1},
+        {"text": "x станет 12", "correct": false, "order": 2},
+        {"text": "x станет 10", "correct": false, "order": 3},
+        {"text": "Ошибка компиляции", "correct": true, "order": 4}
+      ]
+    },
+    {
+      "text": "Чем отличается == от equals() при сравнении строк?",
+      "detailedText": "== проверяет, указывают ли переменные на один объект, а equals() сравнивает текст.",
+      "answers": [
+        {"text": "Оба сравнивают ссылки", "correct": false, "order": 1},
+        {"text": "== сравнивает ссылки, equals() сравнивает содержимое", "correct": true, "order": 2},
+        {"text": "Оба сравнивают содержимое", "correct": false, "order": 3},
+        {"text": "equals() используется только для чисел", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Что выведет System.out.println(10 + 20 + \"30\");?",
+      "detailedText": "Сначала сложатся числа (10+20=30), затем конкатенируется строка.",
+      "answers": [
+        {"text": "30", "correct": false, "order": 1},
+        {"text": "\"3030\"", "correct": true, "order": 2},
+        {"text": "\"102030\"", "correct": false, "order": 3},
+        {"text": "Ошибка компиляции", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какое значение будет у int x = 5; x *= 2 + 3;?",
+      "detailedText": "2+3=5, затем x *= 5 (то же, что x = x * 5).",
+      "answers": [
+        {"text": "25", "correct": true, "order": 1},
+        {"text": "10", "correct": false, "order": 2},
+        {"text": "15", "correct": false, "order": 3},
+        {"text": "Ошибка компиляции", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какое значение будет у int x = 1; x = x++ + ++x;?",
+      "detailedText": "x++ возвращает 1, ++x увеличивает x до 3 и возвращает 3, результат 1+3=4.",
+      "answers": [
+        {"text": "4", "correct": true, "order": 1},
+        {"text": "3", "correct": false, "order": 2},
+        {"text": "2", "correct": false, "order": 3},
+        {"text": "5", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какой результат выполнения 3 & 5?",
+      "detailedText": "3(011) & 5(101) = 001 (1 в десятичной системе).",
+      "answers": [
+        {"text": "1", "correct": true, "order": 1},
+        {"text": "3", "correct": false, "order": 2},
+        {"text": "5", "correct": false, "order": 3},
+        {"text": "7", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какой результат double result = 10 / 4;?",
+      "detailedText": "10 / 4 выполняется как целочисленное деление (2), затем преобразуется в double.",
+      "answers": [
+        {"text": "2.0", "correct": true, "order": 1},
+        {"text": "2.5", "correct": false, "order": 2},
+        {"text": "Ошибка компиляции", "correct": false, "order": 3},
+        {"text": "Infinity", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какие типы переменных допускают null?",
+      "detailedText": "Примитивные типы (int, double и т. д.) не могут быть null.",
+      "answers": [
+        {"text": "Только ссылочные", "correct": true, "order": 1},
+        {"text": "Только примитивные", "correct": false, "order": 2},
+        {"text": "Все типы", "correct": false, "order": 3},
+        {"text": "Ни один тип", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какой диапазон у типа short?",
+      "detailedText": "short – 16-битный тип со знаком.",
+      "answers": [
+        {"text": "-32 768 до 32 767", "correct": true, "order": 1},
+        {"text": "0 до 65 535", "correct": false, "order": 2},
+        {"text": "-128 до 127", "correct": false, "order": 3},
+        {"text": "-2^31 до 2^31-1", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Что делает final с переменной?",
+      "detailedText": "После присвоения значения final-переменной изменить его нельзя.",
+      "answers": [
+        {"text": "Запрещает изменение после инициализации", "correct": true, "order": 1},
+        {"text": "Делает переменную неизменяемой в памяти", "correct": false, "order": 2},
+        {"text": "Означает статическую переменную", "correct": false, "order": 3},
+        {"text": "Автоматически присваивает значение 0", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Каков результат Math.round(10.5)?",
+      "detailedText": "Math.round округляет к ближайшему целому (по правилам математики).",
+      "answers": [
+        {"text": "11", "correct": true, "order": 1},
+        {"text": "10", "correct": false, "order": 2},
+        {"text": "10.0", "correct": false, "order": 3},
+        {"text": "Ошибка компиляции", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какое значение у char c = 65;?",
+      "detailedText": "65 соответствует символу 'A' в ASCII.",
+      "answers": [
+        {"text": "'A'", "correct": true, "order": 1},
+        {"text": "65", "correct": false, "order": 2},
+        {"text": "'B'", "correct": false, "order": 3},
+        {"text": "Ошибка компиляции", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какой оператор используется для побитового исключающего ИЛИ?",
+      "detailedText": "Оператор ^ выполняет XOR, устанавливая бит в 1, если он различен в операндах.",
+      "answers": [
+        {"text": "^", "correct": true, "order": 1},
+        {"text": "&", "correct": false, "order": 2},
+        {"text": "|", "correct": false, "order": 3},
+        {"text": "~", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Что произойдет при byte b = 127; b++;?",
+      "detailedText": "Byte хранит значения от -128 до 127. Переполнение приводит к -128.",
+      "answers": [
+        {"text": "b станет -128", "correct": true, "order": 1},
+        {"text": "b станет 128", "correct": false, "order": 2},
+        {"text": "Ошибка компиляции", "correct": false, "order": 3},
+        {"text": "b останется 127", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Что вернет Integer.parseInt(\"100\");? ",
+      "detailedText": "Метод Integer.parseInt преобразует строку в int.",
+      "answers": [
+        {"text": "100", "correct": true, "order": 1},
+        {"text": "\"100\"", "correct": false, "order": 2},
+        {"text": "Ошибка компиляции", "correct": false, "order": 3},
+        {"text": "null", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Как создать неизменяемую переменную?",
+      "detailedText": "final делает переменную неизменяемой после присвоения.",
+      "answers": [
+        {"text": "Использовать final", "correct": true, "order": 1},
+        {"text": "Использовать static", "correct": false, "order": 2},
+        {"text": "Использовать const", "correct": false, "order": 3},
+        {"text": "Использовать var", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Каков результат Integer.valueOf('10') + Integer.valueOf('20')?",
+      "detailedText": "Метод valueOf преобразует строку в int, затем выполняется сложение.",
+      "answers": [
+        {"text": "30", "correct": true, "order": 1},
+        {"text": "\"1020\"", "correct": false, "order": 2},
+        {"text": "Ошибка компиляции", "correct": false, "order": 3},
+        {"text": "10.20", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какой будет результат int x = 5; int y = x++ * 2 + --x;?",
+      "detailedText": "x++ сначала возвращает 5, затем x становится 6. Выражение: 5 * 2 + 5 = 10 + 5 = 15.",
+      "answers": [
+        {"text": "14", "correct": false, "order": 1},
+        {"text": "15", "correct": true, "order": 2},
+        {"text": "12", "correct": false, "order": 3},
+        {"text": "13", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Чем отличаются final и effectively final переменные в Java?",
+      "detailedText": "final указывается явно, effectively final — не изменяется после инициализации.",
+      "answers": [
+        {"text": "effectively final объявляется с помощью ключевого слова effectively", "correct": false, "order": 1},
+        {"text": "Это синонимы", "correct": false, "order": 2},
+        {"text": "final указывается явно, effectively final — не изменяется после инициализации", "correct": true, "order": 3},
+        {"text": "final можно изменить, а effectively final — нет", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какой будет результат System.out.println(2.0 - 1.1);?",
+      "detailedText": "Дробные числа хранятся в формате IEEE 754, что вызывает неточности.",
+      "answers": [
+        {"text": "0.9", "correct": false, "order": 1},
+        {"text": "0.8999999999999999", "correct": true, "order": 2},
+        {"text": "1.0", "correct": false, "order": 3},
+        {"text": "Ошибка компиляции", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Каков результат int x = 5; int y = 10; System.out.println(x++ + ++y);?",
+      "detailedText": "x++ возвращает 5, ++y увеличивает y до 11, выражение: 5 + 11 = 16.",
+      "answers": [
+        {"text": "16", "correct": true, "order": 1},
+        {"text": "15", "correct": false, "order": 2},
+        {"text": "17", "correct": false, "order": 3},
+        {"text": "Ошибка компиляции", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Что выведет System.out.println('Result: ' + 5 + 3);?",
+      "detailedText": "Оператор + конкатенирует строки, поэтому 5 + '3' становится '53'.",
+      "answers": [
+        {"text": "'Result: 53'", "correct": true, "order": 1},
+        {"text": "'Result: 8'", "correct": false, "order": 2},
+        {"text": "Ошибка компиляции", "correct": false, "order": 3},
+        {"text": "'Result: 5 + 3'", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какой результат Integer.valueOf(128) == Integer.valueOf(128);?",
+      "detailedText": "Автоупаковка кэширует значения от -128 до 127, а 128 создается как новый объект.",
+      "answers": [
+        {"text": "null", "correct": false, "order": 4},
+        {"text": "true", "correct": false, "order": 2},
+        {"text": "Ошибка компиляции", "correct": false, "order": 3},
+        {"text": "false", "correct": true, "order": 1}
+      ]
+    },
+    {
+      "text": "Какой результат int x = 10; System.out.println(x >>> 2);?",
+      "detailedText": ">>> выполняет беззнаковый сдвиг: 10 (1010) >>> 2 дает 0010, то есть 2.",
+      "answers": [
+        {"text": "5", "correct": false, "order": 2},
+        {"text": "2", "correct": true, "order": 1},
+        {"text": "4", "correct": false, "order": 3},
+        {"text": "Ошибка компиляции", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какой тип данных лучше использовать для хранения денежных значений?",
+      "detailedText": "BigDecimal гарантирует точность при вычислениях, float и double могут давать ошибки округления.",
+      "answers": [
+        {"text": "BigDecimal", "correct": true, "order": 1},
+        {"text": "double", "correct": false, "order": 2},
+        {"text": "float", "correct": false, "order": 3},
+        {"text": "int", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Что вернет Math.max(Double.NaN, 10.0);?",
+      "detailedText": "Любая операция с NaN возвращает NaN.",
+      "answers": [
+        {"text": "Ошибка компиляции", "correct": false, "order": 1},
+        {"text": "10.0", "correct": false, "order": 2},
+        {"text": "NaN", "correct": true, "order": 3},
+        {"text": "Exception", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какое значение у Integer.parseInt('10', 2);?",
+      "detailedText": "'10' в двоичной системе = 2 в десятичной.",
+      "answers": [
+        {"text": "2", "correct": true, "order": 1},
+        {"text": "10", "correct": false, "order": 2},
+        {"text": "4", "correct": false, "order": 3},
+        {"text": "Ошибка компиляции", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Что произойдет при double d = 1/0;?",
+      "detailedText": "Деление на 0 для double не вызывает ошибку, а возвращает Infinity.",
+      "answers": [
+        {"text": "Ошибка компиляляции", "correct": false, "order": 2},
+        {"text": "d = Infinity", "correct": true, "order": 1},
+        {"text": "Exception", "correct": false, "order": 3},
+        {"text": "d = 0", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Каков результат System.out.println(0.1 + 0.2 == 0.3);?",
+      "detailedText": "Ошибки округления делают результат чуть больше 0.3.",
+      "answers": [
+        {"text": "Exception", "correct": false, "order": 1},
+        {"text": "true", "correct": false, "order": 2},
+        {"text": "Ошибка компиляции", "correct": false, "order": 3},
+        {"text": "false", "correct": true, "order": 4}
+      ]
+    },
+    {
+      "text": "Как создать неизменяемый список в Java?",
+      "detailedText": "List.of() создает полностью неизменяемый список.",
+      "answers": [
+        {"text": "Collections.unmodifiableList(Arrays.asList(1,2,3))", "correct": false, "order": 1},
+        {"text": "new ArrayList<>(Arrays.asList(1,2,3))", "correct": false, "order": 2},
+        {"text": "Arrays.asList(1,2,3)", "correct": false, "order": 3},
+        {"text": "List.of(1,2,3)", "correct": true, "order": 4}
+      ]
+    },
+    {
+      "text": "Что выведет System.out.println(1_000_000 + 500_000);?",
+      "detailedText": "Подчеркивания в числах игнорируются компилятором.",
+      "answers": [
+        {"text": "1500000", "correct": true, "order": 1},
+        {"text": "1_500_000", "correct": false, "order": 2},
+        {"text": "Ошибка компиляции", "correct": false, "order": 3},
+        {"text": "1000000", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Что делает оператор instanceof?",
+      "detailedText": "instanceof проверяет, относится ли объект к указанному классу.",
+      "answers": [
+        {"text": "Изменяет тип объекта", "correct": false, "order": 1},
+        {"text": "Определяет размер объекта", "correct": false, "order": 2},
+        {"text": "Проверяет принадлежность объекта к классу", "correct": true, "order": 3},
+        {"text": "Создает новый объект", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какой результат String s = 'Java'; s.concat('8'); System.out.println(s);?",
+      "detailedText": "Строки в Java неизменяемы, метод concat возвращает новую строку.",
+      "answers": [
+        {"text": "'Java'", "correct": true, "order": 1},
+        {"text": "'Java8'", "correct": false, "order": 2},
+        {"text": "Ошибка компиляции", "correct": false, "order": 3},
+        {"text": "null", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Каков результат Integer.toBinaryString(10);?",
+      "detailedText": "Метод toBinaryString возвращает строку в двоичном представлении.",
+      "answers": [
+        {"text": "'10'", "correct": false, "order": 1},
+        {"text": "'1010'", "correct": true, "order": 2},
+        {"text": "'00001010'", "correct": false, "order": 3},
+        {"text": "Ошибка компиляции", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Каков результат System.out.println(~5);?",
+      "detailedText": "~ выполняет побитовое отрицание: ~5 = -(5+1) = -6.",
+      "answers": [
+        {"text": "-6", "correct": true, "order": 1},
+        {"text": "4", "correct": false, "order": 2},
+        {"text": "-5", "correct": false, "order": 3},
+        {"text": "5", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какой будет результат System.out.println('abc' == new String('abc'));?",
+      "detailedText": "new String('abc') создает новый объект, == сравнивает ссылки.",
+      "answers": [
+        {"text": "null", "correct": false, "order": 1},
+        {"text": "true", "correct": false, "order": 2},
+        {"text": "Ошибка компиляции", "correct": false, "order": 3},
+        {"text": "false", "correct": true, "order": 4}
+      ]
+    },
+    {
+      "text": "Что произойдет при System.out.println(Long.MAX_VALUE + 1);?",
+      "detailedText": "Переполнение типа long приводит к зацикливанию диапазона.",
+      "answers": [
+        {"text": "Переполнение, отрицательное число", "correct": true, "order": 1},
+        {"text": "Infinity", "correct": false, "order": 2},
+        {"text": "Ошибка компиляции", "correct": false, "order": 3},
+        {"text": "Exception", "correct": false, "order": 4}
+      ]
+    }
+  ]
+}

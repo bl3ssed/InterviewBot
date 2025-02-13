@@ -19,4 +19,5 @@ public interface TestRepository extends JpaRepository<Test, Integer> {
 
     // Получение всех тестов, отсортированных по дате создания
     List<Test> findAllByOrderByCreatedAtDesc();
+    List<Test> findAllByOrderByTestId();
 }
