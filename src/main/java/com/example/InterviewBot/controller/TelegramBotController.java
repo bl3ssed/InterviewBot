@@ -2,25 +2,38 @@ package com.example.InterviewBot.controller;
 
 
 import com.example.InterviewBot.config.BotConfig;
+import com.example.InterviewBot.dto.AnswerJson;
+import com.example.InterviewBot.dto.QuestionJson;
+import com.example.InterviewBot.dto.TestJson;
 import com.example.InterviewBot.model.*;
 import com.example.InterviewBot.repository.*;
-import com.example.InterviewBot.service.FeedbackService;
-import com.example.InterviewBot.service.StatisticsService;
-import com.example.InterviewBot.service.UserService;
+import com.example.InterviewBot.service.*;
 import com.example.InterviewBot.util.BotUtils;
 import com.example.InterviewBot.util.CurrentTestManager;
 import com.example.InterviewBot.util.UserStateManager;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Document;
+import org.telegram.telegrambots.meta.api.objects.File;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramBot;
 
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.*;
+
+import static org.apache.commons.io.FileUtils.getFile;
 
 @Component
 @AllArgsConstructor
@@ -50,7 +63,13 @@ public class TelegramBotController extends TelegramLongPollingBot {
     private AnswerRepository answerRepository;
 
     @Autowired
+    private AnswerService answerService;
+
+    @Autowired
     private QuestionRepository questionRepository ;
+
+    @Autowired
+    private QuestionService questionService;
 
     @Autowired
     private FeedbackService feedbackService;
@@ -66,6 +85,9 @@ public class TelegramBotController extends TelegramLongPollingBot {
 
     @Autowired
     private BotUtils botUtils;
+    @Autowired
+    private TestService testService;
+
 
     @Override
     public String getBotUsername() {
@@ -80,13 +102,14 @@ public class TelegramBotController extends TelegramLongPollingBot {
     }
     @Override
     public void onUpdateReceived(Update update) {
+        long chatId = update.getMessage().getChatId();
+        String username = update.getMessage().getFrom().getUserName();
+        String firstName = update.getMessage().getFrom().getFirstName();
+        Long tgID = update.getMessage().getFrom().getId();
+        String currentState = userStateManager.getUserStates().getOrDefault(chatId,null);
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
-            long chatId = update.getMessage().getChatId();
-            String username = update.getMessage().getFrom().getUserName();
-            String firstName = update.getMessage().getFrom().getFirstName();
-            Long tgID = update.getMessage().getFrom().getId();
-            String currentState = userStateManager.getUserStates().getOrDefault(chatId,null);
+
             if (currentState == null) {
                 if (messageText.equals("/help")) {
                     getStarted(username, firstName, tgID, chatId);
@@ -108,7 +131,12 @@ public class TelegramBotController extends TelegramLongPollingBot {
                 else if (messageText.equals("/stat")) {
                     getStatistics(tgID, chatId);
                 }
-
+                else if (messageText.equals("/add_test1")) {
+                    //addTest(tgID, chatId);
+                }
+                else if(messageText.equals("/add_test")){
+                    addTest1(tgID, chatId);
+                }
                 else {
                     // Обработка других команд и сообщений
                     botUtils.sendMessage(chatId, "Команда не распознана. Пожалуйста, используйте /start для начала.",this);
@@ -138,6 +166,7 @@ public class TelegramBotController extends TelegramLongPollingBot {
                             // Обработка выбора теста
                             getFeedbackRate(messageText, chatId, tgID);
                             break;
+
                         default:
                             userStateManager.getUserStates().remove(chatId);
                             botUtils.sendMessage(chatId, "Неизвестное состояние. Пожалуйста, начните с команды /start.", this);
@@ -146,7 +175,139 @@ public class TelegramBotController extends TelegramLongPollingBot {
                 }
             }
         }
+        else if (update.getMessage().hasDocument()) {
+            Document document = update.getMessage().getDocument();
+
+                    // Обработка выбора теста
+                    if (document.getFileName().endsWith(".json")) {
+                        getJsonTest(document, chatId, tgID);
+                    } else {
+                        botUtils.sendMessage(chatId, "Пожалуйста, загрузите файл в формате JSON.", this);
+                    }
+        }
     }
+
+    private void getJsonTest(Document jsondoc, long chatId, Long tgID) {
+        String fileId = jsondoc.getFileId();
+
+        try {
+            // Получаем объект File с помощью getFile()
+            GetFile getFile = new GetFile();
+            getFile.setFileId(fileId);
+            File file = execute(getFile); // Выполняем запрос для получения файла
+            String filePath = file.getFilePath();
+
+            // Получаем URL для скачивания файла
+            String fileUrl = "https://api.telegram.org/file/bot" + getBotToken() + "/" + filePath;
+
+            // Загружаем JSON-файл
+            java.io.File jsonFile = downloadFileFromUrl(fileUrl); // Изменённый вызов, передаём URL
+            String jsonContent = new String(Files.readAllBytes(jsonFile.toPath()), StandardCharsets.UTF_8);
+
+            // Добавляем тест из JSON в базу
+            addTestFromJson(jsonContent, chatId);
+        } catch (Exception e) {
+            botUtils.sendMessage(chatId, "Ошибка при обработке файла.", this);
+            e.printStackTrace();
+        }
+    }
+
+
+    public java.io.File downloadFileFromUrl(String fileUrl) throws java.io.IOException {
+        // Загружаем файл и сохраняем его на сервере
+        java.io.File downloadedFile = new java.io.File("C:\\Users\\blessed\\Projects\\InterviewBot\\src\\main\\resources\\tests_to_add\\test.json");
+
+        try (InputStream in = new URL(fileUrl).openStream();
+             FileOutputStream out = new FileOutputStream(downloadedFile)) {
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = in.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesRead);
+            }
+        }
+
+        return downloadedFile; // Возвращаем скачанный файл
+    }
+
+
+
+    private void addTestFromJson(String jsonContent, long chatId) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            TestJson testJson = objectMapper.readValue(jsonContent, TestJson.class);
+
+            // Создаем тест
+            Test test = testService.createTest(testJson.getTestName(), "Описание теста");
+
+            // Обработка вопросов
+            for (QuestionJson q : testJson.getQuestions()) {
+                // Создаем вопрос с развернутым текстом
+                Question question = questionService.createQuestion(test.getTestId(), q.getText(), q.getDetailedText());
+
+                // Обработка ответов
+                for (AnswerJson a : q.getAnswers()) {
+                    answerService.createAnswer(question.getQuestionId(), a.getText(), a.getOrder(), a.isCorrect());
+                }
+            }
+
+            botUtils.sendMessage(chatId, "Тест успешно добавлен!", this);
+        } catch (Exception e) {
+            botUtils.sendMessage(chatId, "Ошибка при разборе JSON. Проверьте формат файла.", this);
+            e.printStackTrace();
+        }
+    }
+
+
+    private void addTest1(Long tgID, long chatId) {
+        User user = userRepository.findByTgId(tgID).orElse(null);
+        if (user != null && user.getRole().equals("admin")) {
+            userStateManager.getUserStates().put(chatId,"WAITING_JSON");
+            botUtils.sendMessage(chatId, "Ожидаю JSON: ", this);
+        }
+    }
+
+
+//    private void addTest(Long tgID, long chatId) {
+//        User user = userRepository.findByTgId(tgID).orElse(null);
+//        if (user != null && user.getRole().equals("admin")) {
+//
+//            Scanner scanner = new Scanner(System.in);
+//            botUtils.sendMessage(chatId,"Вы добавляете тест.",this);
+//            System.out.println("Введите количество тестов:\n");
+//            int cnt_tst = scanner.nextInt();
+//            for (int i = 0; i < cnt_tst; i++) {
+//                System.out.println("Введите название теста:\n");
+//                String testName = scanner.next();
+//                Test addtest =testService.createTest(testName,"desc");
+//                System.out.println("Введите кол-во вопросов к тесту");
+//                int cnt_question = scanner.nextInt();
+//                for (int j = 0; j < cnt_question; j++) {
+//                    System.out.println("Введите текст вопроса:");
+//                    String questiontext = scanner.next();
+//                    Question addquestion =questionService.createQuestion(addtest.getTestId(),questiontext);
+//                    System.out.println("Введите кол-во ответовк этому вопросу:");
+//                    int cnt_answer = scanner.nextInt();
+//                    for (int k = 0; k < cnt_answer; k++) {
+//                        System.out.println("Введите текст ответа:");
+//                        String answertext = scanner.next();
+//                        boolean fl = false;
+//                        System.out.println("Если он правильный введите 1, если нет - ничего не вводите");
+//                        String bol = scanner.nextLine();
+//                        if (!bol.isEmpty()) {
+//                            fl = true;
+//                        }
+//                        answerService.createAnswer(addquestion.getQuestionId(),answertext,k+1,fl);
+//                    }
+//                    System.out.println("Вы ввели ответы на вопрос: "+addquestion.getQuestionId());
+//                }
+//                System.out.println("Вы ввели вопросы на тест: "+addtest.getTestId());
+//            }
+//
+//        }
+//        else {
+//            botUtils.sendMessage(chatId,"Sorry, but you is not admin( about all questions: @bl3ssed_k1d",this);
+//        }
+//    }
 
     private void getStarted(String username, String firstName, Long tgID, long chatId) {
         var msg = "Здравствуйте, "+username+"!\n"+"Добро пожаловать в главное меню!\n" +"Вот справка по боту:\n"+"/start - регистрация\n"+"/stat - статистика по тестам\n"+ "/tests - список тестов\n"+"/feedback - оставить отзыв о работе бота\n"+"/stop - выйти из текущей активности\n";
@@ -212,7 +373,7 @@ public class TelegramBotController extends TelegramLongPollingBot {
     }
 
     private void showTests(long chatId) {
-        List<Test> tests = testRepository.findAllByOrderByCreatedAtDesc(); // Получаем список тестов из репозитория
+        List<Test> tests = testRepository.findAllByOrderByTestId(); // Получаем список тестов из репозитория
 
         if (tests.isEmpty()) {
             botUtils.sendMessage(chatId, "Нет доступных тестов.", this);
@@ -220,9 +381,7 @@ public class TelegramBotController extends TelegramLongPollingBot {
         }
 
         StringBuilder message = new StringBuilder("Доступные тесты:\n");
-        int tst_cnt = 0;
         for (Test test : tests) {
-            tst_cnt++;
             message.append(test.getTestId()).append(". ").append(test.getTitle()).append("\n");
         }
         message.append("Введите ID теста, который хотите пройти.");
@@ -230,7 +389,7 @@ public class TelegramBotController extends TelegramLongPollingBot {
         // Устанавливаем состояние пользователя в SELECTING_TEST
         userStateManager.getUserStates().put(chatId, "SELECTING_TEST");
 
-        botUtils.sendMessageWithKeyboardTest(chatId, message.toString(), this,tst_cnt);
+        botUtils.sendMessageWithKeyboardTestList(chatId, message.toString(), this,tests);
     }
 
     private void startTest(String messageText, long chatId) {
@@ -342,9 +501,12 @@ public class TelegramBotController extends TelegramLongPollingBot {
                         rightAnswer += answer.getAnswerText() + " ";
                     }
                 }
-                String msg ="Ответ не верный.\n"+"Правильный ответ: "+rightAnswer+"\n"+" Переходим к следующему вопросу." ;
+                String details = "Подробный ответ: \n";
+                details += currentQuestion.getDetailed() + "\n";
+                String msg ="Ответ не верный.\n"+"Правильный ответ: "+rightAnswer+"\n"+" Переходим к следующему вопросу.\n";
                 /* TODO исправить count, вводить неявно. */
                 botUtils.sendMessage(chatId, msg , this);
+                botUtils.sendMessage(chatId, details , this);
             }
             // Здесь можно добавить логику для проверки ответа
             // Например, сравнить ответ пользователя с правильным ответом

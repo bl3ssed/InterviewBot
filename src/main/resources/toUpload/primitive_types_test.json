@@ -1,0 +1,297 @@
+{
+  "testName": "Примитивные типы данных в Java",
+  "questions": [
+    {
+      "text": "Сколько примитивных типов данных существует в Java?",
+      "detailedText": "В Java есть 8 примитивных типов: byte, short, int, long, float, double, char, boolean.",
+      "answers": [
+        {"text": "6", "correct": false, "order": 1},
+        {"text": "8", "correct": true, "order": 2},
+        {"text": "10", "correct": false, "order": 3},
+        {"text": "12", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какой размер (в битах) имеет тип int в Java?",
+      "detailedText": "int занимает 32 бита (4 байта) и хранит целые числа.",
+      "answers": [
+        {"text": "8", "correct": false, "order": 1},
+        {"text": "16", "correct": false, "order": 2},
+        {"text": "32", "correct": true, "order": 3},
+        {"text": "64", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какое ключевое слово используется для объявления вещественного числа двойной точности?",
+      "detailedText": "double — это тип данных с двойной точностью (64 бита).",
+      "answers": [
+        {"text": "float", "correct": false, "order": 1},
+        {"text": "decimal", "correct": false, "order": 2},
+        {"text": "double", "correct": true, "order": 3},
+        {"text": "real", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какое значение принимает переменная типа boolean по умолчанию?",
+      "detailedText": "По умолчанию boolean принимает значение false.",
+      "answers": [
+        {"text": "true", "correct": false, "order": 1},
+        {"text": "false", "correct": true, "order": 2},
+        {"text": "null", "correct": false, "order": 3},
+        {"text": "0", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какой из примитивных типов данных может хранить символ Unicode?",
+      "detailedText": "char хранит символ Unicode и занимает 16 бит.",
+      "answers": [
+        {"text": "char", "correct": true, "order": 1},
+        {"text": "String", "correct": false, "order": 2},
+        {"text": "int", "correct": false, "order": 3},
+        {"text": "boolean", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какое максимальное значение может хранить переменная типа byte?",
+      "detailedText": "byte хранит целые числа от -128 до 127 (8 бит).",
+      "answers": [
+        {"text": "127", "correct": true, "order": 1},
+        {"text": "255", "correct": false, "order": 2},
+        {"text": "32767", "correct": false, "order": 3},
+        {"text": "2147483647", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Что выведет следующий код?",
+      "detailedText": "Оба операнда — целые числа, поэтому результат также будет целым (5 / 2 = 2).",
+      "answers": [
+        {"text": "2.5", "correct": false, "order": 1},
+        {"text": "2", "correct": true, "order": 2},
+        {"text": "3", "correct": false, "order": 3},
+        {"text": "Ошибка компиляции", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Что произойдет при приведении double к int?",
+      "detailedText": "Приведение double к int отбрасывает дробную часть ((int) 3.9 → 3).",
+      "answers": [
+        {"text": "Округление вверх", "correct": false, "order": 1},
+        {"text": "Округление вниз", "correct": true, "order": 2},
+        {"text": "Ошибка компиляции", "correct": false, "order": 3},
+        {"text": "Число останется double", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какой из типов данных занимает больше всего памяти?",
+      "detailedText": "double занимает 64 бита, в то время как int — 32 бита, char — 16 бит, long — 64 бита.",
+      "answers": [
+        {"text": "int", "correct": false, "order": 1},
+        {"text": "double", "correct": true, "order": 2},
+        {"text": "char", "correct": false, "order": 3},
+        {"text": "long", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какое значение boolean будет установлено при сравнении 5 > 3?",
+      "detailedText": "Оператор > вернет true, так как 5 больше 3.",
+      "answers": [
+        {"text": "true", "correct": true, "order": 1},
+        {"text": "false", "correct": false, "order": 2},
+        {"text": "null", "correct": false, "order": 3},
+        {"text": "Ошибка компиляции", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какое минимальное значение может хранить short?",
+      "detailedText": "short хранит значения от -32,768 до 32,767 (16 бит).",
+      "answers": [
+        {"text": "-128", "correct": false, "order": 1},
+        {"text": "-32768", "correct": true, "order": 2},
+        {"text": "-2147483648", "correct": false, "order": 3},
+        {"text": "0", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какой примитивный тип используется для хранения длинных целых чисел?",
+      "detailedText": "long хранит 64-битные целые числа.",
+      "answers": [
+        {"text": "int", "correct": false, "order": 1},
+        {"text": "double", "correct": false, "order": 2},
+        {"text": "long", "correct": true, "order": 3},
+        {"text": "short", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Что выведет код?",
+      "detailedText": "10 / 4 — целочисленное деление, результат 2, но затем он приводится к double, становясь 2.0.",
+      "answers": [
+        {"text": "2.5", "correct": false, "order": 1},
+        {"text": "2", "correct": false, "order": 2},
+        {"text": "2.0", "correct": true, "order": 3},
+        {"text": "2.25", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какой тип используется для хранения одного символа?",
+      "detailedText": "char хранит одиночный символ Unicode.",
+      "answers": [
+        {"text": "String", "correct": false, "order": 1},
+        {"text": "char", "correct": true, "order": 2},
+        {"text": "boolean", "correct": false, "order": 3},
+        {"text": "byte", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Что произойдет при выходе за границы значения типа byte?",
+      "detailedText": "Если byte превысит 127, он начнет отсчет с -128 (из-за переполнения).",
+      "answers": [
+        {"text": "Ошибка компиляции", "correct": false, "order": 1},
+        {"text": "Программа завершится с исключением", "correct": false, "order": 2},
+        {"text": "Произойдет переполнение (overflow)", "correct": true, "order": 3},
+        {"text": "Значение автоматически конвертируется в int", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Что выведет код?",
+      "detailedText": "float требует суффикс f (float f = 5.5f;).",
+      "answers": [
+        {"text": "5.5", "correct": false, "order": 1},
+        {"text": "Ошибка компиляции", "correct": true, "order": 2},
+        {"text": "5", "correct": false, "order": 3},
+        {"text": "5.500000", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Как записать long литерал?",
+      "detailedText": "L указывает, что число типа long.",
+      "answers": [
+        {"text": "10000000000L", "correct": true, "order": 1},
+        {"text": "10000000000l", "correct": true, "order": 2},
+        {"text": "10000000000", "correct": false, "order": 3},
+        {"text": "L10000000000", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какое максимальное значение может хранить float?",
+      "detailedText": "float (32 бита) может хранить числа от ~1.4E-45 до 3.4E+38.",
+      "answers": [
+        {"text": "3.4E+38", "correct": true, "order": 1},
+        {"text": "1.8E+308", "correct": false, "order": 2},
+        {"text": "2147483647", "correct": false, "order": 3},
+        {"text": "32767", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какой из типов данных занимает 64 бита?",
+      "detailedText": "double занимает 64 бита.",
+      "answers": [
+        {"text": "int", "correct": false, "order": 1},
+        {"text": "double", "correct": true, "order": 2},
+        {"text": "short", "correct": false, "order": 3},
+        {"text": "char", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Что выведет код?",
+      "detailedText": "Один из операндов double, результат также double.",
+      "answers": [
+        {"text": "2.0", "correct": false, "order": 1},
+        {"text": "2.5", "correct": true, "order": 2},
+        {"text": "2", "correct": false, "order": 3},
+        {"text": "Ошибка компиляции", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какое значение char по умолчанию?",
+      "detailedText": "char по умолчанию содержит нулевой байт, что эквивалентно 0.",
+      "answers": [
+        {"text": "' ' (пробел)", "correct": false, "order": 1},
+        {"text": "null", "correct": false, "order": 2},
+        {"text": "нулевой байт", "correct": true, "order": 3},
+        {"text": "'0'", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Можно ли присвоить boolean значение 1?",
+      "detailedText": "В Java boolean может быть только true или false, а не числа.",
+      "answers": [
+        {"text": "Да", "correct": false, "order": 1},
+        {"text": "Нет", "correct": true, "order": 2}
+      ]
+    },
+    {
+      "text": "Какой тип используется для хранения дробных чисел с меньшей точностью?",
+      "detailedText": "float (32 бита) менее точен, чем double (64 бита).",
+      "answers": [
+        {"text": "double", "correct": false, "order": 1},
+        {"text": "float", "correct": true, "order": 2},
+        {"text": "int", "correct": false, "order": 3},
+        {"text": "long", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Какое значение long по умолчанию?",
+      "detailedText": "long по умолчанию равно 0.",
+      "answers": [
+        {"text": "0", "correct": true, "order": 1},
+        {"text": "null", "correct": false, "order": 2},
+        {"text": "L0", "correct": false, "order": 3},
+        {"text": "1", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Можно ли сложить char и int?",
+      "detailedText": "char неявно преобразуется в int.",
+      "answers": [
+        {"text": "Да", "correct": true, "order": 1},
+        {"text": "Нет", "correct": false, "order": 2}
+      ]
+    },
+    {
+      "text": "Можно ли использовать short в арифметических выражениях?",
+      "detailedText": "short участвует в операциях, но результат конвертируется в int.",
+      "answers": [
+        {"text": "Да", "correct": true, "order": 1},
+        {"text": "Нет", "correct": false, "order": 2}
+      ]
+    },
+    {
+      "text": "Как записать шестнадцатеричный литерал?",
+      "detailedText": "Шестнадцатеричный формат: 0x или 0X перед числом.",
+      "answers": [
+        {"text": "0x1A", "correct": true, "order": 1},
+        {"text": "1Ax", "correct": false, "order": 2},
+        {"text": "#1A", "correct": false, "order": 3},
+        {"text": "x1A", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Можно ли хранить int в byte без явного преобразования?",
+      "detailedText": "int (32 бита) не может быть сохранен в byte (8 бит) без явного преобразования.",
+      "answers": [
+        {"text": "Да", "correct": false, "order": 1},
+        {"text": "Нет", "correct": true, "order": 2}
+      ]
+    },
+    {
+      "text": "Что произойдет при делении на 0.0?",
+      "detailedText": "В double/float деление на 0.0 даст Infinity, а на 0 вызовет ArithmeticException.",
+      "answers": [
+        {"text": "Исключение", "correct": false, "order": 1},
+        {"text": "Infinity", "correct": true, "order": 2},
+        {"text": "0", "correct": false, "order": 3},
+        {"text": "Ошибка компиляции", "correct": false, "order": 4}
+      ]
+    },
+    {
+      "text": "Что выведет код?",
+      "detailedText": "char имеет код 65, а 65 + 1 = 66.",
+      "answers": [
+        {"text": "B", "correct": false, "order": 1},
+        {"text": "66", "correct": true, "order": 2},
+        {"text": "A1", "correct": false, "order": 3},
+        {"text": "Ошибка компиляции", "correct": false, "order": 4}
+      ]
+    }
+  ]
+}
