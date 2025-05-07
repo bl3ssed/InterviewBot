@@ -14,6 +14,7 @@ import com.example.InterviewBot.util.UserStateManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
@@ -31,13 +32,22 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.apache.commons.io.FileUtils.getFile;
 
 @Component
 @AllArgsConstructor
 public class TelegramBotController extends TelegramLongPollingBot {
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Autowired
     private UserStateManager userStateManager;
@@ -119,6 +129,9 @@ public class TelegramBotController extends TelegramLongPollingBot {
                     start(username, firstName, tgID, chatId);
                 }
                 // Обработка команды /tests
+                else if (messageText.equals("/find")) {
+                    findTest(chatId,tgID);
+                }
                 else if (messageText.equals("/tests")) {
                     showTests(chatId);
                 }// Обработка фидбека
@@ -162,6 +175,10 @@ public class TelegramBotController extends TelegramLongPollingBot {
                             // Обработка выбора теста
                             getFeedbackText(messageText, chatId, tgID);
                             break;
+                        case "WAITING_FOR_TEST_TEXT":
+                            // Обработка выбора теста
+                            getTestText(messageText, chatId, tgID);
+                            break;
                         case "WAITING_FOR_FEEDBACK_RATE":
                             // Обработка выбора теста
                             getFeedbackRate(messageText, chatId, tgID);
@@ -185,6 +202,76 @@ public class TelegramBotController extends TelegramLongPollingBot {
                         botUtils.sendMessage(chatId, "Пожалуйста, загрузите файл в формате JSON.", this);
                     }
         }
+    }
+
+    private void getTestText(String messageText, long chatId, Long tgID) {
+        List<TestDto> foundTests = new ArrayList<>();
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            // Получаем соединение из DataSource (должен быть инжектирован в класс)
+            connection = ((javax.sql.DataSource) applicationContext.getBean("dataSource")).getConnection();
+
+            // SQL-запрос для получения всех тестов, отсортированных по ID
+            String sql = "SELECT test_id, title FROM tests ORDER BY test_id";
+            statement = connection.prepareStatement(sql);
+            resultSet = statement.executeQuery();
+
+            // Подготовка регулярного выражения для поиска
+            String searchPattern = ".*" + Pattern.quote(messageText) + ".*";
+            Pattern pattern = Pattern.compile(searchPattern, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+
+            // Фильтрация результатов
+            while (resultSet.next()) {
+                long testId = resultSet.getLong("test_id");
+                String title = resultSet.getString("title");
+
+                if (pattern.matcher(title).matches()) {
+                    foundTests.add(new TestDto(testId, title));
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            botUtils.sendMessage(chatId, "Ошибка при поиске тестов", this);
+            return;
+        } finally {
+            // Закрытие ресурсов
+            try {
+                if (resultSet != null) resultSet.close();
+                if (statement != null) statement.close();
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Формирование ответа (сохранен оригинальный формат)
+        userStateManager.getUserStates().remove(chatId);
+        StringBuilder msgBuilder = new StringBuilder();
+
+        if (foundTests.isEmpty()) {
+            msgBuilder.append("Тесты по теме '").append(messageText).append("' не найдены.\n");
+        } else {
+            msgBuilder.append("Найдены тесты по теме '").append(messageText).append("':\n");
+            foundTests.forEach(test ->
+                    msgBuilder.append("• ")
+                            .append(test.getTitle())
+                            .append(" Id теста: ")
+                            .append(test.getTestId())
+                            .append("\n"));
+        }
+        msgBuilder.append("\nДля прохождения теста воспользуйтесь /tests\n");
+
+        botUtils.sendMessage(chatId, msgBuilder.toString(), this);
+    }
+
+    private void findTest(long chatId, Long tgID) {
+        userStateManager.getUserStates().put(tgID, "WAITING_FOR_TEST_TEXT");
+        String msg = "Напишите желаемую тему теста:\n";
+        botUtils.sendMessage(chatId, msg, this);
     }
 
     private void getJsonTest(Document jsondoc, long chatId, Long tgID) {
