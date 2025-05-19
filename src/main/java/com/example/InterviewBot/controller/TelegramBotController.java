@@ -211,24 +211,22 @@ public class TelegramBotController extends TelegramLongPollingBot {
         ResultSet resultSet = null;
 
         try {
-            // Получаем соединение из DataSource (должен быть инжектирован в класс)
             connection = ((javax.sql.DataSource) applicationContext.getBean("dataSource")).getConnection();
 
-            // SQL-запрос для получения всех тестов, отсортированных по ID
+            // Получаем все тесты для локальной обработки
             String sql = "SELECT test_id, title FROM tests ORDER BY test_id";
             statement = connection.prepareStatement(sql);
             resultSet = statement.executeQuery();
 
-            // Подготовка регулярного выражения для поиска
-            String searchPattern = ".*" + Pattern.quote(messageText) + ".*";
-            Pattern pattern = Pattern.compile(searchPattern, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+            // Парсим поисковый запрос пользователя
+            SearchQuery searchQuery = parseSearchQuery(messageText);
 
             // Фильтрация результатов
             while (resultSet.next()) {
                 long testId = resultSet.getLong("test_id");
                 String title = resultSet.getString("title");
 
-                if (pattern.matcher(title).matches()) {
+                if (matchesSearchQuery(title, searchQuery)) {
                     foundTests.add(new TestDto(testId, title));
                 }
             }
@@ -238,7 +236,6 @@ public class TelegramBotController extends TelegramLongPollingBot {
             botUtils.sendMessage(chatId, "Ошибка при поиске тестов", this);
             return;
         } finally {
-            // Закрытие ресурсов
             try {
                 if (resultSet != null) resultSet.close();
                 if (statement != null) statement.close();
@@ -248,23 +245,97 @@ public class TelegramBotController extends TelegramLongPollingBot {
             }
         }
 
-        // Формирование ответа (сохранен оригинальный формат)
+        // Формирование ответа
         userStateManager.getUserStates().remove(chatId);
+        sendSearchResults(chatId, messageText, foundTests);
+    }
+
+    // Класс для хранения параметров поиска
+    private static class SearchQuery {
+        String topic;
+        String language;
+        String difficulty;
+    }
+
+    // Парсинг поискового запроса
+    private SearchQuery parseSearchQuery(String userInput) {
+        SearchQuery query = new SearchQuery();
+
+        // Извлекаем язык (python, java, c#)
+        Matcher langMatcher = Pattern.compile("(python|java|c#|с#)", Pattern.CASE_INSENSITIVE).matcher(userInput);
+        if (langMatcher.find()) {
+            query.language = langMatcher.group(1).toLowerCase();
+        }
+
+        // Извлекаем сложность (easy, middle, hard)
+        Matcher diffMatcher = Pattern.compile("(легк|easy|средн|middle|сложн|hard)", Pattern.CASE_INSENSITIVE).matcher(userInput);
+        if (diffMatcher.find()) {
+            String match = diffMatcher.group(1).toLowerCase();
+            if (match.startsWith("легк") || match.equals("easy")) query.difficulty = "easy";
+            else if (match.startsWith("средн") || match.equals("middle")) query.difficulty = "middle";
+            else if (match.startsWith("сложн") || match.equals("hard")) query.difficulty = "hard";
+        }
+
+        // Извлекаем тему (все остальные значимые слова)
+        String remaining = userInput
+                .replaceAll("(python|java|c#|с#|легк|easy|средн|middle|сложн|hard|тест|на|тему|язык|уровн|сложност)", "")
+                .trim();
+
+        if (!remaining.isEmpty()) {
+            query.topic = remaining;
+        }
+
+        return query;
+    }
+
+    // Проверка соответствия теста поисковому запросу
+    private boolean matchesSearchQuery(String title, SearchQuery query) {
+        // Все части запроса должны совпадать (если они указаны)
+        boolean matches = true;
+
+        if (query.language != null) {
+            matches &= title.toLowerCase().contains(query.language);
+        }
+
+        if (query.difficulty != null) {
+            matches &= title.toLowerCase().contains(query.difficulty);
+        }
+
+        if (query.topic != null) {
+            // Ищем совпадение по любому слову из темы
+            String[] topicWords = query.topic.split("\\s+");
+            boolean topicMatch = false;
+            for (String word : topicWords) {
+                if (word.length() > 3 && title.toLowerCase().contains(word.toLowerCase())) {
+                    topicMatch = true;
+                    break;
+                }
+            }
+            matches &= topicMatch;
+        }
+
+        return matches;
+    }
+
+    // Отправка результатов пользователю
+    private void sendSearchResults(long chatId, String originalQuery, List<TestDto> foundTests) {
         StringBuilder msgBuilder = new StringBuilder();
 
         if (foundTests.isEmpty()) {
-            msgBuilder.append("Тесты по теме '").append(messageText).append("' не найдены.\n");
+            msgBuilder.append("По запросу '").append(originalQuery).append("' тесты не найдены.\n");
+            msgBuilder.append("Попробуйте изменить параметры поиска, например:\n");
+            msgBuilder.append("• 'тест по python на алгоритмы'\n");
+            msgBuilder.append("• 'java middle oop'\n");
+            msgBuilder.append("• 'сложные тесты по c#'\n");
         } else {
-            msgBuilder.append("Найдены тесты по теме '").append(messageText).append("':\n");
+            msgBuilder.append("Результаты поиска ('").append(originalQuery).append("'):\n");
             foundTests.forEach(test ->
-                    msgBuilder.append("• ")
-                            .append(test.getTitle())
-                            .append(" Id теста: ")
-                            .append(test.getTestId())
+                    msgBuilder.append("• ID:").append(test.getTestId())
+                            .append(" - ").append(test.getTitle())
                             .append("\n"));
         }
-        msgBuilder.append("\nДля прохождения теста воспользуйтесь /tests\n");
 
+        msgBuilder.append("\nДля прохождения теста воспользуйтесь /tests\n");
         botUtils.sendMessage(chatId, msgBuilder.toString(), this);
     }
 
