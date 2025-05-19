@@ -18,6 +18,9 @@ public class Question {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String questionText;
 
+    @Column(name = "detailed",nullable = false)
+    private String detailed;
+
     @Column(nullable = false)
     private String createdAt;
 
